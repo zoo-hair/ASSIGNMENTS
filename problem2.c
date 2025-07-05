@@ -1,128 +1,124 @@
 //
-// Created by Zuhair on 7/3/2025.
+// Created by Zuhair on 7/4/2025.
 //
-// SET A
-// SPRING 2024 Problem 2
+/*
+ * spell sentence determiner
+ */
 #include <stdio.h>
-#include <string.h>
 
-#define MAX_TRAINS 100
-struct Train {
-    char name[50];
-    int totalTickets;
-    float ratings;
-};
+#define  LENGTH 100
 
-void addTrain(struct Train list_of_trains[], int* num_of_trains);
-void mostPopularTrain(struct Train list_of_trains[], int num_of_trains);
-void displayAllTrains(struct Train list_of_trains[], int num_of_trains);
+int number_of_words (char str[]);
+int nth_word_length (char str[], int n);
+int is_prime (int number);
+int is_spell (char str[]);
 
 int main (void)
 {
-    struct Train list_of_trains[MAX_TRAINS];
-    int num_of_trains = 0;
-    int choice;
+    char string[LENGTH];
+    int res;
+    printf("Enter a string: ");
+    gets(string);
+    res = is_spell(string);
+    printf("%d\n", res);
 
-    while (1)
+    if (res == 1)
     {
-        printf("1. Add Train\n");
-        printf("2. Find most popular train\n");
-        printf("3. Display all trains\n");
-        printf("4. Exit\n");
+        printf("Yes\n");
+        return 1;
+    }
+    else
+    {
+        printf("No\n");
+        return 0;
+    }
 
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
+}
 
-        switch (choice)
+int number_of_words (char str[])
+{
+    int i = 0, count = 0;
+
+    while (str[i] != '\n')
+    {
+        if (str[i] == ' ' || str[i] == '.' || str[i] == ',' || str[i] == '!' || str[i] == '?' || str[i] =='\n')
+            count++;
+        i++;
+    }
+
+    return count;
+}
+
+int nth_word_length (char str[], int n)
+{
+    int i = 0, word_count = 0;
+
+    while (str[i] != '\n')
+    {
+        if (str[i] == ' ' || str[i] == '.' || str[i] == ',' || str[i] == '!' || str[i] == '?' || str[i] =='\n')
+            word_count++;
+
+        if (word_count == n)
         {
-            case 1:
+            int length = 0;
+
+            while (str[i] != ' ' || str[i] != '.' || str[i] != ',' || str[i] != '!' || str[i] != '?' || str[i] !='\n')
             {
-                addTrain(list_of_trains, &num_of_trains);
-                break;
+                length++;
+                i++;
             }
-            case 2:
-            {
-                mostPopularTrain(list_of_trains, num_of_trains);
-                break;
-            }
-            case 3:
-            {
-                displayAllTrains(list_of_trains, num_of_trains);
-                break;
-            }
-            case 4:
-            {
-                printf("Exiting the program. Goodbye!\n");
-                return 0;
-            }
-            default:
-                printf("Invalid choice. Please try again.\n");
+            return length;
+        }
+        i++;
+    }
+    return 1;
+}
+
+int is_prime (int number)
+{
+    int count = 0;
+    if (number <= 1)
+    {
+        return 0;
+    }
+
+    for (int i = 1; i <= number; i++)
+    {
+        if (number % i == 0)
+        {
+            count++;
         }
     }
-    return 0;
+
+    if (count == 2)
+    {
+        return 1;
+    }
+    else
+        return 0;
 }
 
-void addTrain (struct Train list_of_Trains[], int* num_of_trains)
+int is_spell (char str[])
 {
-    if (*num_of_trains >= MAX_TRAINS)
+    int number = 0;
+    int prime = 0;
+    int words_num = number_of_words(str[LENGTH]);
+    int length[words_num];
+    for (int i = 0; i < words_num; i++)
     {
-        printf("Cannot add more trains. Maximum limit reached.\n");
-
-        return;
-    }
-    struct Train new_train;
-    printf("Enter train name: ");
-    scanf("%s", new_train.name);
-
-    printf("Enter total tickets: ");
-    scanf("%d", &new_train.totalTickets);
-
-    printf(("Enter ratings: "));
-    scanf("%f", &new_train.ratings);
-
-    list_of_Trains[*num_of_trains] = new_train;
-    (*num_of_trains)++;
-
-    printf("Train added successfully!\n");
-}
-
-void mostPopularTrain(struct Train list_of_trains[], int num_of_trains)
-{
-    if (num_of_trains == 0)
-    {
-        printf("No trains available to analyze.\n");
-        return;
+        length[i] = nth_word_length(str[words_num],i);
     }
 
-    int max_tickets = list_of_trains[0].totalTickets;
-    int index = 0;
-
-    for (int i = 1; i < num_of_trains; i++)
+    for (int i = 0; i < words_num; i++)
     {
-        if (list_of_trains[i].totalTickets > max_tickets)
-        {
-            max_tickets = list_of_trains[i].totalTickets;
-            index = i;
-        }
+        number =  number * 10 + length[i];
     }
-    printf("The Most Popular Train: %s\n", list_of_trains[index].name);
-}
+    prime = is_prime(number);
 
-void displayAllTrains(struct Train list_of_trains[], int num_of_trains)
-{
-    if (num_of_trains == 0)
+    if (prime == 1)
     {
-        printf("No trains available to display.\n");
-        return;
+        return 1;
     }
-
-    printf("\nList of Trains\n");
-
-    for (int i = 0; i <num_of_trains; i++)
-    {
-        printf("Train : %d\n", i + 1);
-        printf("Name : %s\n", list_of_trains[i].name);
-        printf("Total Tickets : %d\n", list_of_trains[i].totalTickets);
-        printf("Ratings : %.2f\n\n", list_of_trains[i].ratings);
-    }
+    else
+        return 0;
 }
